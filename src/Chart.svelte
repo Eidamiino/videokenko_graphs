@@ -49,7 +49,7 @@
             Array(5).fill(num / 5),
         );
 
-        const newSegmentLength = 30;
+        const newSegmentLength = 20;
 
         const newViews = [];
         for (let i = 0; i < viewsBySecond.length; i += newSegmentLength) {
@@ -58,7 +58,10 @@
             newViews.push(segmentSum);
         }
 
-        const timeLabels = Utils.generateTimeSegments(videoLength, (videoLength/newSegmentLength));
+        const timeLabels = Utils.generateTimeSegments(
+            videoLength,
+            videoLength / newSegmentLength,
+        );
 
         return {
             labels: timeLabels,
@@ -112,6 +115,19 @@
                         },
                         ticks: {
                             stepSize: 100,
+                        },
+                    },
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: function (tooltipItems) {
+                                const xValue = tooltipItems[0].label;
+                                return formatTime(xValue);
+                            },
+                            label: function (tooltipItem) {
+                                return `Views: ${Math.floor(tooltipItem.raw)}`;
+                            },
                         },
                     },
                 },
