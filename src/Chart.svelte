@@ -40,17 +40,32 @@
     }
 
     function generateChartData() {
-        const segments = 60;
         const videoLength = Utils.getRandomMaxTime();
-        const timeLabels = Utils.generateTimeSegments(videoLength, segments);
+        const segments = Math.floor(videoLength / 5);
         const randomViews = Utils.generateViewsForSegments(segments);
+        //dummy input data, intervals of 5
+
+        const viewsBySecond = randomViews.flatMap((num) =>
+            Array(5).fill(num / 5),
+        );
+
+        const newSegmentLength = 30;
+
+        const newViews = [];
+        for (let i = 0; i < viewsBySecond.length; i += newSegmentLength) {
+            const segment = viewsBySecond.slice(i, i + newSegmentLength);
+            const segmentSum = segment.reduce((x, val) => x + val, 0);
+            newViews.push(segmentSum);
+        }
+
+        const timeLabels = Utils.generateTimeSegments(videoLength, (videoLength/newSegmentLength));
 
         return {
             labels: timeLabels,
             datasets: [
                 {
                     label: "Views",
-                    data: randomViews,
+                    data: newViews,
                     backgroundColor: Utils.transparentize(
                         Utils.CHART_COLORS.blue,
                         0.7,
